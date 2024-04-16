@@ -27,6 +27,7 @@ async function showProjects(projects) {                                    //cr√
     for (const element of projects){                                       //boucle sur chaque projet
         const projectElement = createProjectElement(element);              //cr√©√© un element figure qui represente un projet
         gallery.appendChild(projectElement);                               //ajoute a la galerie
+        }
     }
 }
 
@@ -57,4 +58,3 @@ async function main() {                                                    //cr√
         })
     }
 }    
-main()

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Sophie Bluel - Architecte d'intérieur</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Work+Sans&display=swap" rel="stylesheet">
+	<script src="login.js"></script>
+	<link rel="stylesheet" href="login.css">
+    <link rel="stylesheet" href="share.css">
+</head>
+
+
+<body>
+    <header>
+        <h1>Sophie Bluel <span>Architecte d'intérieur</span></h1>
+        <nav>
+            <ul>
+                <li>projets</li>
+                <li>contact</li>
+                <li>login</li>
+                <li><img src="./assets/icons/instagram.png" alt="Instagram"></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="login-container">
+        <h2>Log In</h2>
+        <div class="login">
+            <form id="login-form" action="#" method="post">
+                <label for="email" class="container-login-label"> E-mail </label>
+                <input type="text" id="email" name="email" autocomplete="email">
+
+                <label for="password" class="container-login-label">Mot de passe </label>
+                <input type="password" id="password" name="password" required autocomplete="current-password">
+
+                <button class="btn-filter" type="submit" id="submit-button" value="Se Connecter">Se connecter</button>
+                <p id="passeword-Err" hidden> Erreur dans l'identifiant ou le mot de passe </p>
+            </form>
+            <p id="forget">Mot de passe oublié</p>
+        </div>
+    </section>
+	<footer id="mentions">
+		<p><a href="#">Mentions légales</a></p>
+	</footer>
+</body>
+
+</html>
