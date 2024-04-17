@@ -16,7 +16,7 @@ function createProjectElement(project){                                 //créé
 async function getProjects() {                                             //créé une fonction qui est asynchrone (permet de faire des promesses a l'interieur)
     const reponse = await fetch("http://localhost:5678/api/works");        //fetch permet d'appeler le serveur avec une requête de type -Get
     return reponse.json();                                                 //transforme le .json en JS                     
-
+}
 /************ ShowProjects **************/
 async function showProjects(projects) {                                    //créé fonction asynchrone avec un parametre du projet
     const gallery = document.getElementsByClassName("gallery")[0];         //recupère element HTML à la galerie
@@ -29,7 +29,6 @@ async function showProjects(projects) {                                    //cr�
         gallery.appendChild(projectElement);                               //ajoute a la galerie
         }
     }
-}
 
 async function searchProjectsByCategoryName(name){
     let projects = await getProjects();                                    //promesse sur la recuperation donnée 
@@ -41,14 +40,30 @@ async function searchProjectsByCategoryName(name){
     } 
     return projects;
 }
+
+function generateButtons(projects){
+    const categoryNames = projects.map((project)=>{
+        return project.category.name;
+    })
+    const uniqueCategoryNames = ["Tous",... new Set(categoryNames)]         //destructuration passer chaques element unique
+    const buttons = uniqueCategoryNames.map(categoryName => {               //on map et donne la fonction a la categorie
+        const button = document.createElement("button");                    //crée l'element bouton
+        button.className = "buttonFilter";                                  //ajoute la class
+        button.dataset.name = categoryName;                                 //on recupère la catagorie en fonction du nom
+        button.textContent = categoryName;
+        return button;
+    }) 
+    return buttons;                                                         //retourne les boutons 
+}
 /************ Synchronisaion des images avec suppression des doublons **************/
 async function main() {                                                    //créé une fonction main pour pouvoir utiliser await
     const allProjects = await searchProjectsByCategoryName("Tous");        //recupere tout le contenu des projets
-    showProjects(allProjects);                                             //affiche l'ensemble des projets
+    const buttons = generateButtons(allProjects);                          //recupère tout les boutons
+    const buttonContainer = document.getElementsByClassName("filters")[0]; //recupère les div ou on va inserer les buttons
+    buttonContainer.append(... buttons);                                   //injecter les bouttons dans la div grace a "append"
+    await showProjects(allProjects);                                       //affiche l'ensemble des projets
 
 /*************Recuperation boutton***************/ 
-    const buttons = document.getElementsByClassName("buttonFilter");       //recupère tout les boutons qui sont filtrés
-
     for (let i=0; i<buttons.length; i++){                                  //parcourir tout les boutons de 0 a la longueur de tout les boutons
         const btn = buttons[i];                                            //créé variable btn qui correspond au bouton selectionné dans la boucle
         btn.addEventListener("click",async()=> {                           //ajouter, ecouter l'évenement 'click' et exectuer la fonction fléché passé en parametre (btn)
@@ -58,3 +73,4 @@ async function main() {                                                    //cr�
         })
     }
 }    
+main()
