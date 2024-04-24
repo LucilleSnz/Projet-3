@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Sophie Bluel - Architecte d'intérieur</title>
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Work+Sans&display=swap" rel="stylesheet">
-	<script src="login.js"></script>
+	<script src="login.js" defer></script>
 	<link rel="stylesheet" href="login.css">
     <link rel="stylesheet" href="share.css">
 </head>
@@ -18,7 +18,7 @@
             <ul>
                 <li>projets</li>
                 <li>contact</li>
-                <li>login</li>
+                <li> <a href="./login.html">Login</a></li>
                 <li><img src="./assets/icons/instagram.png" alt="Instagram"></li>
             </ul>
         </nav>
@@ -29,13 +29,13 @@
         <div class="login">
             <form id="login-form" action="#" method="post">
                 <label for="email" class="container-login-label"> E-mail </label>
-                <input type="text" id="email" name="email" autocomplete="email">
+                <input type="email" id="email" name="email" autocomplete="email" value="sophie.bluel@test.tld">
 
                 <label for="password" class="container-login-label">Mot de passe </label>
-                <input type="password" id="password" name="password" required autocomplete="current-password">
+                <input type="password" id="password" name="password" required autocomplete="current-password" value="S0phie">
 
-                <button class="btn-filter" type="submit" id="submit-button" value="Se Connecter">Se connecter</button>
-                <p id="passeword-Err" hidden> Erreur dans l'identifiant ou le mot de passe </p>
+                <button class="btn-submit" type="submit" id="submit-button" value="Se Connecter">Se connecter</button>
+                <p id="password-err" hidden> Erreur dans l'identifiant ou le mot de passe </p>
             </form>
             <p id="forget">Mot de passe oublié</p>
         </div>

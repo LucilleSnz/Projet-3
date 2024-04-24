@@ -72,5 +72,39 @@ async function main() {                                                    //crÃ
             showProjects(projects);
         })
     }
+    if (localStorage.getItem("user")){
+        createButtonAddProject();
+    }
 }    
 main()
+
+
+
+
+/********************** modal *************************/
+
+function createModal(){
+    const oldDialog = document.getElementById("modal");
+    if (oldDialog){
+        oldDialog.innerHTML = "";
+        return oldDialog;
+    }
+    const dialog = document.createElement("dialog");
+    dialog.id = "modal";
+    dialog.open = true;
+    document.body.appendChild(dialog);
+        return dialog;
+}
+
+
+function createButtonAddProject(){
+    const button = document.createElement("button");
+    button.id = "buttonAjout"
+    button.textContent = "Ajouter un projet";
+    button.addEventListener("click", ()=>{
+        const modal = createModal();
+        modal.textContent = "COUCOU"
+    })
+    const portfolio = document.getElementById("portfolio");
+    portfolio.prepend(button);
+}
