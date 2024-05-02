@@ -98,7 +98,7 @@ button{
     align-self: center;
     width: 179px;
     height: 36px;
-    border: 1px solid;
+    border: none;
     border-radius: 60px;
     background-color: #1D6154;
     color: #FFF;
@@ -126,4 +126,13 @@ p > a {
     color: black;
     color: inherit;
     text-decoration: none;
+}
+
+#password-err{
+    align-self: center;
+    margin-bottom: 20px;
+}
+
+li a {
+    font-weight: bold;    
 }

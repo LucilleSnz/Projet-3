@@ -56,24 +56,25 @@ function generateButtons(projects){
     return buttons;                                                         //retourne les boutons 
 }
 /************ Synchronisaion des images avec suppression des doublons **************/
-async function main() {                                                    //créé une fonction main pour pouvoir utiliser await
+async function main() { 
     const allProjects = await searchProjectsByCategoryName("Tous");        //recupere tout le contenu des projets
-    const buttons = generateButtons(allProjects);                          //recupère tout les boutons
-    const buttonContainer = document.getElementsByClassName("filters")[0]; //recupère les div ou on va inserer les buttons
-    buttonContainer.append(... buttons);                                   //injecter les bouttons dans la div grace a "append"
     await showProjects(allProjects);                                       //affiche l'ensemble des projets
-
-/*************Recuperation boutton***************/ 
-    for (let i=0; i<buttons.length; i++){                                  //parcourir tout les boutons de 0 a la longueur de tout les boutons
-        const btn = buttons[i];                                            //créé variable btn qui correspond au bouton selectionné dans la boucle
-        btn.addEventListener("click",async()=> {                           //ajouter, ecouter l'évenement 'click' et exectuer la fonction fléché passé en parametre (btn)
-            const filterName = btn.dataset.name;                                //recupere le nom du filtre (sans accent 'ô')
-            const projects = await searchProjectsByCategoryName(filterName);    //appel la fonction qui permet de filtrer par nom
-            showProjects(projects);
-        })
-    }
     if (localStorage.getItem("user")){
         createButtonAddProject();
+    } else {                                                                   //créé une fonction main pour pouvoir utiliser await
+        const buttons = generateButtons(allProjects);                          //recupère tout les boutons
+        const buttonContainer = document.getElementsByClassName("filters")[0]; //recupère les div ou on va inserer les buttons
+        buttonContainer.append(... buttons);                                   //injecter les bouttons dans la div grace a "append"
+
+    /*************Recuperation boutton***************/ 
+        for (let i=0; i<buttons.length; i++){                                  //parcourir tout les boutons de 0 a la longueur de tout les boutons
+            const btn = buttons[i];                                            //créé variable btn qui correspond au bouton selectionné dans la boucle
+            btn.addEventListener("click",async()=> {                           //ajouter, ecouter l'évenement 'click' et exectuer la fonction fléché passé en parametre (btn)
+                const filterName = btn.dataset.name;                                //recupere le nom du filtre (sans accent 'ô')
+                const projects = await searchProjectsByCategoryName(filterName);    //appel la fonction qui permet de filtrer par nom
+                showProjects(projects);
+            })
+        }
     }
 }    
 main()
@@ -99,12 +100,111 @@ function createModal(){
 
 function createButtonAddProject(){
     const button = document.createElement("button");
-    button.id = "buttonAjout"
-    button.textContent = "Ajouter un projet";
+    button.id = "buttonModifier";
+    
+    
+    //injecter du html en js
+    button.innerHTML = `<i class='fa-regular fa-pen-to-square'></i>modifier`;
+    
     button.addEventListener("click", ()=>{
         const modal = createModal();
-        modal.textContent = "COUCOU"
-    })
+        const container = document.createElement("div");
+        container.id = "modal-container";
+        modal.appendChild(container)
+        modalPhoto(container)    
+        modal.addEventListener("click", (event) =>{
+            console.log(event);
+            if (event.target == modal){
+                document.body.removeChild(modal)
+            }
+        })
+    }
+    )
     const portfolio = document.getElementById("portfolio");
     portfolio.prepend(button);
 }
+
+async function modalPhoto(container){
+    container.innerHTML = "";
+    const modalTitle = document.createElement("h4")
+    modalTitle.textContent = "Galerie photo";
+
+    const buttonAjout = document.createElement("button")
+    buttonAjout.textContent= "Ajouter une photo";
+    buttonAjout.id = "ajout";
+
+
+
+    const buttonClose = document.createElement("close")
+    buttonClose.innerHTML = `<i class="fa-solid fa-xmark"></i>`;
+    buttonClose.id = "close";
+    
+
+
+
+
+    const gallery = createElt("div", "modalGallery")
+    const projects = await getProjects()
+    for (let index = 0; index < projects.length; index++) {
+        const project = projects[index];
+        const photo = createElt("img")
+        photo.src = project.imageUrl; 
+        photo.className = "photoModalGallery";
+        gallery.appendChild(photo)
+
+
+        //ajout poubelle sur photo
+        const buttonDelete = document.createElement("button");
+        buttonDelete.id = "buttonDelete";
+        buttonDelete.innerHTML = `<i class="fa-solid fa-trash-can"></i>`;
+    }
+    container.appendChild(buttonClose)
+    container.appendChild(modalTitle)
+    container.appendChild(gallery)
+    container.appendChild(buttonAjout)
+
+}
+
+function createElt(type, id){
+    const element = document.createElement(type)
+    element.id = id;
+    return element;
+}
+
+/*function createButtonAddProject(){
+    const button = document.createElement("button");
+    button.id = "buttonModifier";
+    
+    
+    //injecter du html en js
+    button.innerHTML = `<i class='fa-regular fa-pen-to-square'></i>modifier`;
+    
+    button.addEventListener("click", ()=>{
+        const modal = createModal();
+        const container = document.createElement("div");
+        container.id = "modal-container";
+        modal.appendChild(container)
+        modalPhoto(container)
+        modal.addEventListener("click", (event) =>{
+            console.log(event);
+            if (event.target == modal){
+                document.body.removeChild(modal)
+            }
+        })
+
+
+        /*const buttonClose = document.createElement("button");
+        buttonClose.innerHTML = `<i class="fa-solid fa-xmark"></i>`;
+        buttonClose.id = "buttonClose";
+
+        buttonClose.addEventListener("click", ()=>{
+            const cancel = document.createElement("div");
+            modal.container.appendChild(cancel);
+            modalClose(cancel)
+            const buttonClose = document.createElement("button");
+            buttonClose.innerHTML = `<i class="fa-solid fa-xmark"></i>`;
+            buttonClose.id = "buttonClose";
+            const close = createModal();
+            const cancel = document.createElement("div");
+            close.appendChild(cancel);
+*/

@@ -116,3 +116,84 @@ footer nav ul {
 	margin: 2em
 }
 
+/***********************modal********************/
+
+#buttonModifier{
+	display: flex;
+	color: black;
+	background: none;
+	border: none;
+	font-family: unset;
+	float: right;
+	margin-left: 700px;
+	max-width: 1440px;
+	position: absolute;
+	margin-top: 10px;
+}
+
+.modifier{
+	display: flex;
+	width: 50%;
+}
+
+#modal{
+	position: fixed;
+	bottom: 0;
+	top: 0;
+	left: 0;
+	right: 0;
+	border: none;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 100%;
+	height: 100%;
+	background-color: #0c0b0b63;
+}
+
+#modal-container{
+	width: 440px;
+	background-color: white;
+	border-radius: 2%;
+	padding: 25px 70px;
+	font-size: 1.7em;
+}
+
+.photoModalGallery{
+	width: 17%;
+	margin-bottom: 20px;
+	margin-left: 10px;
+}
+
+h4{
+	text-align: center;
+}
+
+div #modalGallery{
+	margin-top: 40px;
+	border-bottom: 1px solid rgb(199, 199, 199);
+	padding-bottom: 45px;
+}
+
+#ajout{
+	margin-left: 125px;
+	align-self: center;
+	width: 190px;
+	height: 36px;
+	border: none;
+	border-radius: 60px;
+	background-color: #1D6154;
+	color: #FFF;
+	font-family: Syne;
+	font-size: 13px;
+	font-weight: 700;
+	text-align: center;
+	margin-top: 40px;
+}
+
+#close{
+	display: flex;
+	font-size: 0.7em;
+	position: absolute;
+	right: 430px;
+}
