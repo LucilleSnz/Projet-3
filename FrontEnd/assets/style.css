@@ -155,7 +155,7 @@ footer nav ul {
 	width: 440px;
 	background-color: white;
 	border-radius: 2%;
-	padding: 25px 70px;
+	padding: 35px 70px;
 	font-size: 1.7em;
 }
 
@@ -195,5 +195,30 @@ div #modalGallery{
 	display: flex;
 	font-size: 0.7em;
 	position: absolute;
-	right: 430px;
+	right: 465px;
+	background: none;
+	border: none;
+}
+
+#delete{
+	background: black;
+	color: white;
+	border: none;
+	position: absolute;
+	border-radius: 2px;
+}
+
+#containerAjoutPhoto{
+	width: 440px;
+	background-color: white;
+	border-radius: 2%;
+	padding: 35px 70px;
+	font-size: 1.7em;
+	height: 559px;
+}
+
+#headerModal{
+	display: flex;
+	justify-content: space-between;
+
 }

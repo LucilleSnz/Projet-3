@@ -113,7 +113,6 @@ function createButtonAddProject(){
         modal.appendChild(container)
         modalPhoto(container)    
         modal.addEventListener("click", (event) =>{
-            console.log(event);
             if (event.target == modal){
                 document.body.removeChild(modal)
             }
@@ -133,78 +132,189 @@ async function modalPhoto(container){
     buttonAjout.textContent= "Ajouter une photo";
     buttonAjout.id = "ajout";
 
-
-
-    const buttonClose = document.createElement("close")
+    const buttonClose = document.createElement("button")
     buttonClose.innerHTML = `<i class="fa-solid fa-xmark"></i>`;
     buttonClose.id = "close";
     
-
-
-
-
     const gallery = createElt("div", "modalGallery")
     const projects = await getProjects()
+
+        buttonClose.addEventListener("click", (event) =>{
+            console.log(event);
+            
+            document.body.removeChild(modal)
+            }
+        )
+
+
+
+    const userJson = localStorage.getItem("user");
+    const user = JSON.parse(userJson);
+    const token = user.token;
     for (let index = 0; index < projects.length; index++) {
         const project = projects[index];
-        const photo = createElt("img")
+        const projectContainer = createElt ("div", "projectContainer");
+
+        const photo = createElt("img");
         photo.src = project.imageUrl; 
         photo.className = "photoModalGallery";
-        gallery.appendChild(photo)
+        projectContainer.appendChild(photo)
 
-
-        //ajout poubelle sur photo
-        const buttonDelete = document.createElement("button");
-        buttonDelete.id = "buttonDelete";
+        const buttonDelete = createElt("button", "delete");
         buttonDelete.innerHTML = `<i class="fa-solid fa-trash-can"></i>`;
+        projectContainer.appendChild(buttonDelete)
+        
+        gallery.appendChild(projectContainer)
+
+        buttonDelete.addEventListener("click", async(event)=>{
+            gallery.removeChild(projectContainer);
+            await fetch(`http://localhost:5678/api/works/${project.id}`, {
+                method: "delete",
+                headers: {Authorization: `Bearer ${token}`}
+            })
+            const allProjects = await searchProjectsByCategoryName("Tous"); 
+            await showProjects(allProjects);  
+
+        })
     }
+
     container.appendChild(buttonClose)
     container.appendChild(modalTitle)
     container.appendChild(gallery)
     container.appendChild(buttonAjout)
-
+    ajoutPhotoModal(buttonAjout, container)
 }
 
 function createElt(type, id){
     const element = document.createElement(type)
     element.id = id;
+    element.name = id;
     return element;
 }
 
-/*function createButtonAddProject(){
-    const button = document.createElement("button");
-    button.id = "buttonModifier";
-    
-    
-    //injecter du html en js
-    button.innerHTML = `<i class='fa-regular fa-pen-to-square'></i>modifier`;
-    
-    button.addEventListener("click", ()=>{
-        const modal = createModal();
-        const container = document.createElement("div");
-        container.id = "modal-container";
-        modal.appendChild(container)
-        modalPhoto(container)
-        modal.addEventListener("click", (event) =>{
-            console.log(event);
-            if (event.target == modal){
-                document.body.removeChild(modal)
-            }
+
+async function ajoutPhotoModal(buttonAjout, container){
+    buttonAjout.addEventListener("click", async(event) => {
+        container.innerHTML = "";
+        const projects = await getProjects();
+
+        const header = createElt("div", "headerModal");
+        container.appendChild(header);
+        const buttonClose = createElt("button", "buttonClose")
+        const back = createElt("button", "back");
+
+        buttonClose.innerHTML =  `<i class="fa-solid fa-xmark"></i>`;
+        back.innerHTML = `retour`;
+
+        const bodyModal = createElt("div", "bodyModal");
+        container.appendChild(bodyModal);
+        const bodyTitle = createElt("h4", "bodyTile");
+        bodyTitle.textContent = "Ajout photo";
+        bodyModal.appendChild(bodyTitle);
+
+        const form = createElt("form", "form");
+        bodyModal.appendChild(form);
+
+        const formFileContenair = createElt("div", "formFileContainer");
+        form.appendChild(formFileContenair);
+        
+        const img = createElt("img", "image");
+        formFileContenair.appendChild(img);
+        const input = createElt("input", "fileInput");
+        formFileContenair.appendChild(input);
+        const fileP = createElt("p", "text");
+        fileP.textContent = "jpg";
+        input.type = "file";
+        input.accept = "image/png, image/jpeg";
+        input.required = true;
+        input.addEventListener("change", (event)=>{
+            const [file] = input.files;
+            if (file) {
+                img.src = URL.createObjectURL(file);
+                }
         })
 
+        //div 
+        const titleLabel = createElt("label", "titleLabel");
+        titleLabel.textContent = "Titre";
+        titleLabel.for = "titleInput";
+        const titleInput = createElt("input", "titleInput");
+        titleInput.required = true;
+        form.appendChild(titleLabel);
+        form.appendChild(titleInput);
 
-        /*const buttonClose = document.createElement("button");
-        buttonClose.innerHTML = `<i class="fa-solid fa-xmark"></i>`;
-        buttonClose.id = "buttonClose";
+        //div
+        const categoryLabel = createElt("label", "categorieLabel");
+        categoryLabel.textContent = "Catégorie";
+        const categoryInput = createElt("select", "categoryInput");
+        categoryInput.type = "select";
+        categoryInput.required = true;
+        const categoryNames = projects.map((project)=>{
+            return project.category.name;
+        })
 
-        buttonClose.addEventListener("click", ()=>{
-            const cancel = document.createElement("div");
-            modal.container.appendChild(cancel);
-            modalClose(cancel)
-            const buttonClose = document.createElement("button");
-            buttonClose.innerHTML = `<i class="fa-solid fa-xmark"></i>`;
-            buttonClose.id = "buttonClose";
-            const close = createModal();
-            const cancel = document.createElement("div");
-            close.appendChild(cancel);
-*/
+        form.addEventListener("submit", async (event) =>{
+            event.preventDefault();
+            const title = titleInput.value.trim();
+            const categoryName = categoryInput.value;
+            const file = input.files[0];
+            const project = projects.find(project =>{
+                if (project.category.name == categoryName){
+                    return true;
+                } else {
+                    return false;
+                }
+            })
+
+            const userJson = localStorage.getItem("user");
+            const user = JSON.parse(userJson);
+            const token = user.token;
+
+            const category = project.category.id;
+            const formData = new FormData();
+            formData.append("title", title);
+            formData.append("category", category);
+            formData.append("image", file);
+            const reponse = await fetch("http://localhost:5678/api/works/", {
+                headers: {Authorization: `Bearer ${token}`},
+                method: "post",
+                body: formData
+            })
+            if (reponse.status == 201){
+            const allProjects = await searchProjectsByCategoryName("Tous"); 
+            await showProjects(allProjects);  
+            modalPhoto(container);
+            } else {
+                const errorText = createElt("p", "errorForm");
+                errorText.textContent = "Erreur"
+                form.appendChild(errorText)
+            }
+
+        })
+
+        form.appendChild(categoryLabel);
+        form.appendChild(categoryInput);
+        const uniqueCategoryNames = new Set(categoryNames);
+        uniqueCategoryNames.forEach(categoryName =>{
+            const option = createElt("option");
+            option.value = categoryName;
+            option.textContent = categoryName;
+            categoryInput.appendChild(option);
+        }
+            )
+        const submitPhoto = createElt("input", "submit");
+        submitPhoto.textContent = "Valider";
+        submitPhoto.type = "submit";
+        form.appendChild(submitPhoto);
+
+        header.appendChild(back);
+        header.appendChild(buttonClose);    
+    
+        back.addEventListener("click", (event)=>{
+            modalPhoto(container) 
+        })
+    })
+
+}
+
+//mettre div par label + input
