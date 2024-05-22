@@ -123,6 +123,9 @@ function createButtonAddProject(){
     portfolio.prepend(button);
 }
 
+
+/*********************** Container pour boutton ajout + fermer et recup photo **********************/
+
 async function modalPhoto(container){
     container.innerHTML = "";
     const modalTitle = document.createElement("h4")
@@ -147,6 +150,7 @@ async function modalPhoto(container){
         )
 
 
+/**************************** Suppression photo ************************/
 
     const userJson = localStorage.getItem("user");
     const user = JSON.parse(userJson);
@@ -177,7 +181,7 @@ async function modalPhoto(container){
 
         })
     }
-
+/**************************** Appel container *********************/
     container.appendChild(buttonClose)
     container.appendChild(modalTitle)
     container.appendChild(gallery)
@@ -185,6 +189,7 @@ async function modalPhoto(container){
     ajoutPhotoModal(buttonAjout, container)
 }
 
+/***************** Creation element type et id *********************/
 function createElt(type, id){
     const element = document.createElement(type)
     element.id = id;
@@ -193,6 +198,7 @@ function createElt(type, id){
 }
 
 
+/************************** ajout photo modal *********************/
 async function ajoutPhotoModal(buttonAjout, container){
     buttonAjout.addEventListener("click", async(event) => {
         container.innerHTML = "";
@@ -204,7 +210,12 @@ async function ajoutPhotoModal(buttonAjout, container){
         const back = createElt("button", "back");
 
         buttonClose.innerHTML =  `<i class="fa-solid fa-xmark"></i>`;
-        back.innerHTML = `retour`;
+        back.innerHTML = ` <i class="fa-solid fa-arrow-left"></i>`;
+        
+        buttonClose.addEventListener("click", (event) =>{                
+            document.body.removeChild(modal)
+            }
+        )
 
         const bodyModal = createElt("div", "bodyModal");
         container.appendChild(bodyModal);
@@ -215,44 +226,121 @@ async function ajoutPhotoModal(buttonAjout, container){
         const form = createElt("form", "form");
         bodyModal.appendChild(form);
 
+
+/********************* creation container pour associer la poubelle a la photo *********************/
         const formFileContenair = createElt("div", "formFileContainer");
         form.appendChild(formFileContenair);
-        
+        const imgPhoto = createElt ("div", "imgPhoto")
+        imgPhoto.innerHTML = `<i class="fa-regular fa-image"></i>`;    
+        formFileContenair.appendChild(imgPhoto);
+
+        const labelForFile = createElt ("label", "labelForFile");
+        formFileContenair.appendChild(labelForFile)
+
+        const spanLabelFile = createElt("span","spanLabelFile")
+        spanLabelFile.textContent = "+ Ajouter photo";
         const img = createElt("img", "image");
         formFileContenair.appendChild(img);
         const input = createElt("input", "fileInput");
         formFileContenair.appendChild(input);
         const fileP = createElt("p", "text");
-        fileP.textContent = "jpg";
+        fileP.textContent = "jpg, png : 4mo max";
         input.type = "file";
         input.accept = "image/png, image/jpeg";
         input.required = true;
         input.addEventListener("change", (event)=>{
             const [file] = input.files;
-            if (file) {
+            if (!file){
+                return;
+            }
+            const sizeInMB = (file.size / (1024*1024)).toFixed(2);
+            if (sizeInMB > 4){
+                alert("Erreur: Image trop lourde");
+                input.value = "";
+            } else {
                 img.src = URL.createObjectURL(file);
-                }
+                spanLabelFile.style.display = "none";
+                labelForFile.style.display = "none";
+            }
+            console.log(file.size)
         })
 
-        //div 
+        labelForFile.appendChild(spanLabelFile)
+        labelForFile.appendChild(input)
+        labelForFile.appendChild(fileP)
+
+
+/************************* containere pour les category ********************************/
+        const containerTitleCategory = createElt("div", "containerTitleCategory");
+        form.appendChild(containerTitleCategory);
         const titleLabel = createElt("label", "titleLabel");
         titleLabel.textContent = "Titre";
         titleLabel.for = "titleInput";
         const titleInput = createElt("input", "titleInput");
         titleInput.required = true;
-        form.appendChild(titleLabel);
-        form.appendChild(titleInput);
 
-        //div
-        const categoryLabel = createElt("label", "categorieLabel");
+        const categoryLabel = createElt("label", "categoryLabel");
         categoryLabel.textContent = "Catégorie";
         const categoryInput = createElt("select", "categoryInput");
+        containerTitleCategory.appendChild(titleLabel);
+        containerTitleCategory.appendChild(titleInput);
+
+        containerTitleCategory.appendChild(categoryLabel);
+        containerTitleCategory.appendChild(categoryInput);
+
+
+
+
+/********************** retourne toute les category + on les recupere *********************/
         categoryInput.type = "select";
         categoryInput.required = true;
         const categoryNames = projects.map((project)=>{
             return project.category.name;
         })
+        const empty = createElt("option", "empty");
+        empty.selected = true;
+        empty.disable = true;
 
+        categoryInput.appendChild(empty);
+
+        
+        const uniqueCategoryNames = new Set(categoryNames);
+        uniqueCategoryNames.forEach(categoryName =>{
+            const option = createElt("option");
+            option.value = categoryName;
+            option.textContent = categoryName;
+            categoryInput.appendChild(option);
+        }
+            )
+        const submitPhoto = createElt("button", "submit");
+        submitPhoto.className = "submitButton";
+        submitPhoto.textContent = "Valider";
+        submitPhoto.type = "submit";
+
+        form.appendChild(submitPhoto);
+
+        header.appendChild(back);
+        header.appendChild(buttonClose);    
+    
+        back.addEventListener("click", (event)=>{
+            modalPhoto(container) 
+        })
+        form.addEventListener("change", ()=>{
+            const title = titleInput.value.trim();
+            const categoryName = categoryInput.value;
+            const file = input.files[0];
+            if (title.length === 0 || categoryName.length === 0 || !file){
+                submitPhoto.className = "submitButton";
+                return
+            } 
+
+            submitPhoto.className = "submitButton buttonGreen";
+
+
+            
+        })
+
+/************************ envoie formulaire *********************/
         form.addEventListener("submit", async (event) =>{
             event.preventDefault();
             const title = titleInput.value.trim();
@@ -292,29 +380,7 @@ async function ajoutPhotoModal(buttonAjout, container){
 
         })
 
-        form.appendChild(categoryLabel);
-        form.appendChild(categoryInput);
-        const uniqueCategoryNames = new Set(categoryNames);
-        uniqueCategoryNames.forEach(categoryName =>{
-            const option = createElt("option");
-            option.value = categoryName;
-            option.textContent = categoryName;
-            categoryInput.appendChild(option);
-        }
-            )
-        const submitPhoto = createElt("input", "submit");
-        submitPhoto.textContent = "Valider";
-        submitPhoto.type = "submit";
-        form.appendChild(submitPhoto);
 
-        header.appendChild(back);
-        header.appendChild(buttonClose);    
-    
-        back.addEventListener("click", (event)=>{
-            modalPhoto(container) 
-        })
     })
 
 }
-
-//mettre div par label + input
