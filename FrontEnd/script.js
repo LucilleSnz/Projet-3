@@ -143,7 +143,6 @@ async function modalPhoto(container){
     const projects = await getProjects()
 
         buttonClose.addEventListener("click", (event) =>{
-            console.log(event);
             
             document.body.removeChild(modal)
             }
@@ -262,7 +261,6 @@ async function ajoutPhotoModal(buttonAjout, container){
                 spanLabelFile.style.display = "none";
                 labelForFile.style.display = "none";
             }
-            console.log(file.size)
         })
 
         labelForFile.appendChild(spanLabelFile)
